@@ -25,23 +25,545 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	xyz "github.com/pulumi/pulumi-xyz/provider"
+	statefulString "github.com/pulumi/pulumi-statefulstring/provider"
 )
 
-func TestRandomCreate(t *testing.T) {
+func TestStatefulStringCreate(t *testing.T) {
 	prov := provider()
 
 	response, err := prov.Create(p.CreateRequest{
-		Urn: urn("Random"),
+		Urn: urn("StatefulString"),
 		Properties: resource.PropertyMap{
-			"length": resource.NewNumberProperty(12),
+			"string": resource.NewStringProperty("hello, world"),
+			"triggers": resource.NewObjectProperty(resource.PropertyMap{
+				"foo": resource.NewStringProperty("bar"),
+			}),
 		},
 		Preview: false,
 	})
 
 	require.NoError(t, err)
-	result := response.Properties["result"].StringValue()
-	assert.Len(t, result, 12)
+	result := response.Properties["string"].StringValue()
+	assert.Equal(t, "hello, world", result)
+}
+
+type ExpectedCreateResult struct {
+}
+
+func TestCreate(t *testing.T) {
+	prov := provider()
+
+	testCases := []struct {
+		name           string
+		properties     p.CreateRequest
+		expectedResult p.CreateResponse
+	}{
+		{
+			name: "Test case 1",
+			properties: p.CreateRequest{
+				Urn: urn("StatefulString"),
+				Properties: resource.PropertyMap{
+					"string": resource.NewStringProperty("hello, world"),
+					"triggers": resource.NewObjectProperty(resource.PropertyMap{
+						"foo": resource.NewStringProperty("bar"),
+					}),
+				},
+				Preview: false,
+			},
+			expectedResult: p.CreateResponse{
+				ID: "StatefulString",
+				Properties: map[resource.PropertyKey]resource.PropertyValue{
+					"string": resource.NewStringProperty("hello, world"),
+					"triggers": resource.NewObjectProperty(resource.PropertyMap{
+						"foo": resource.NewStringProperty("bar"),
+					}),
+				},
+			},
+		},
+		// Add more test cases here
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create the resource
+			response, err := prov.Create(tc.properties)
+			require.NoError(t, err)
+
+			// Check the result
+			assert.Equal(t, tc.expectedResult.Properties, response.Properties)
+			// assert.Equal(t, tc.expectedResult.ID, response.ID)
+		})
+	}
+}
+
+type ExpectedUpdateResult struct {
+	String   string
+	Triggers map[string]string
+}
+
+func TestStatefulStringUpdate(t *testing.T) {
+	prov := provider()
+
+	testCases := []struct {
+		name           string
+		initialProps   resource.PropertyMap
+		updatedProps   resource.PropertyMap
+		expectedResult ExpectedUpdateResult
+	}{
+		{
+			name: "No string change with no trigger change",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("hello, world"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("hello, world"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "hello, world",
+				Triggers: map[string]string{
+					"foo": "bar",
+				},
+			},
+		},
+		{
+			name: "String change with no trigger change",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("hello, world"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "hello, world",
+				Triggers: map[string]string{
+					"foo": "bar",
+				},
+			},
+		},
+		{
+			name: "String change with trigger value change",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("hello, world"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "2",
+				Triggers: map[string]string{
+					"foo": "bar2",
+				},
+			},
+		},
+		{
+			name: "No string change with trigger value change",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "1",
+				Triggers: map[string]string{
+					"foo": "bar2",
+				},
+			},
+		},
+		{
+			name: "No string change with trigger key add",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "1",
+				Triggers: map[string]string{
+					"foo":  "bar",
+					"foo2": "bar2",
+				},
+			},
+		},
+		{
+			name: "String change with trigger key add",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "2",
+				Triggers: map[string]string{
+					"foo":  "bar",
+					"foo2": "bar2",
+				},
+			},
+		},
+		{
+			name: "String change with trigger key remove",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "2",
+				Triggers: map[string]string{
+					"foo": "bar",
+				},
+			},
+		},
+		{
+			name: "String change with trigger key remove and trigger value change",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedUpdateResult{
+				String: "2",
+				Triggers: map[string]string{
+					"foo": "bar2",
+				},
+			},
+		},
+		// Add more test cases here...
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create the resource
+			_, err := prov.Create(p.CreateRequest{
+				Urn:        urn("StatefulString"),
+				Properties: tc.initialProps,
+				Preview:    false,
+			})
+			require.NoError(t, err)
+
+			// Update the resource
+			updateResponse, err := prov.Update(p.UpdateRequest{
+				Urn:     urn("StatefulString"),
+				Olds:    tc.initialProps,
+				News:    tc.updatedProps,
+				Preview: false,
+			})
+			require.NoError(t, err)
+
+			// Check the result
+			stringResult := updateResponse.Properties["string"].StringValue()
+
+			// Get the triggers property
+			triggersProp := updateResponse.Properties["triggers"]
+
+			// Convert triggersProp to map[string]string
+			triggersMap := make(map[string]string)
+			for k, v := range triggersProp.ObjectValue() {
+				triggersMap[string(k)] = v.StringValue()
+			}
+
+			assert.Equal(t, tc.expectedResult.String, stringResult)
+			assert.Equal(t, tc.expectedResult.Triggers, triggersMap)
+		})
+	}
+}
+
+type ExpectedDiffResult struct {
+	HasChanges   bool
+	DetailedDiff map[string]p.PropertyDiff
+}
+
+func TestDiff(t *testing.T) {
+	prov := provider()
+
+	tests := []struct {
+		name           string
+		initialProps   resource.PropertyMap
+		updatedProps   resource.PropertyMap
+		expectedResult ExpectedDiffResult
+	}{
+		{
+			name: "String Same__Triggers Same",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges:   false,
+				DetailedDiff: map[string]p.PropertyDiff{},
+			},
+		},
+		{
+			name: "String Change__Triggers Same",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges:   false,
+				DetailedDiff: map[string]p.PropertyDiff{},
+			},
+		},
+		{
+			name: "String Change__Triggers Change Value",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar3"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"string": {
+						Kind: p.DiffKind("update"),
+					},
+					"triggers.foo2": {
+						Kind: p.DiffKind("update"),
+					},
+				},
+			},
+		},
+		{
+			name: "String Change__Triggers Delete Key",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"string": {
+						Kind: p.DiffKind("update"),
+					},
+					"triggers.foo2": {
+						Kind: p.DiffKind("delete"),
+					},
+				},
+			},
+		},
+		{
+			name: "String Change__Triggers Add Key",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo": resource.NewStringProperty("bar"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("2"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"string": {
+						Kind: p.DiffKind("update"),
+					},
+					"triggers.foo2": {
+						Kind: p.DiffKind("add"),
+					},
+				},
+			},
+		},
+		{
+			name: "String Same__Triggers Change Value",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar3"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"triggers.foo2": {
+						Kind: p.DiffKind("update"),
+					},
+				},
+			},
+		},
+		{
+			name: "String Same__Triggers Add and Delete Key",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo3": resource.NewStringProperty("bar3"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"triggers.foo2": {
+						Kind: p.DiffKind("delete"),
+					},
+					"triggers.foo3": {
+						Kind: p.DiffKind("add"),
+					},
+				},
+			},
+		},
+		{
+			name: "String Same__Triggers Add and Delete Key and Update Value",
+			initialProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("bar"),
+					"foo2": resource.NewStringProperty("bar2"),
+				}),
+			},
+			updatedProps: resource.PropertyMap{
+				"string": resource.NewStringProperty("1"),
+				"triggers": resource.NewObjectProperty(resource.PropertyMap{
+					"foo":  resource.NewStringProperty("barX"),
+					"foo3": resource.NewStringProperty("bar3"),
+				}),
+			},
+			expectedResult: ExpectedDiffResult{
+				HasChanges: true,
+				DetailedDiff: map[string]p.PropertyDiff{
+					"triggers.foo": {
+						Kind: p.DiffKind("update"),
+					},
+					"triggers.foo2": {
+						Kind: p.DiffKind("delete"),
+					},
+					"triggers.foo3": {
+						Kind: p.DiffKind("add"),
+					},
+				},
+			},
+		},
+		// Add more test cases here
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotDiff, err := prov.Diff(p.DiffRequest{
+				// ID:            "",
+				Urn:           urn("StatefulString"),
+				Olds:          tt.initialProps,
+				News:          tt.updatedProps,
+				IgnoreChanges: nil,
+			})
+			require.NoError(t, err)
+			// Check the result
+			assert.Equal(t, tt.expectedResult.HasChanges, gotDiff.HasChanges)
+			assert.Equal(t, tt.expectedResult.DetailedDiff, gotDiff.DetailedDiff)
+		})
+	}
 }
 
 // urn is a helper function to build an urn for running integration tests.
@@ -52,5 +574,5 @@ func urn(typ string) resource.URN {
 
 // Create a test server.
 func provider() integration.Server {
-	return integration.NewServer(xyz.Name, semver.MustParse("1.0.0"), xyz.Provider())
+	return integration.NewServer(statefulString.Name, semver.MustParse("1.0.0"), statefulString.Provider())
 }
