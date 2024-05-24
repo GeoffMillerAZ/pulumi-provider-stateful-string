@@ -1,4 +1,4 @@
-module provider-xyz-native
+module provider-statefulstring-native
 
 go 1.20
 

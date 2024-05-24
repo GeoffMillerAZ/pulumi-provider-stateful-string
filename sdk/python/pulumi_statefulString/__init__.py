@@ -6,16 +6,16 @@ from . import _utilities
 import typing
 # Export this package's modules as members:
 from .provider import *
-from .random import *
+from .stateful_string import *
 _utilities.register(
     resource_modules="""
 [
  {
-  "pkg": "xyz",
+  "pkg": "statefulString",
   "mod": "index",
-  "fqn": "pulumi_xyz",
+  "fqn": "pulumi_statefulString",
   "classes": {
-   "xyz:index:Random": "Random"
+   "statefulString:index:StatefulString": "StatefulString"
   }
  }
 ]
@@ -23,9 +23,9 @@ _utilities.register(
     resource_packages="""
 [
  {
-  "pkg": "xyz",
-  "token": "pulumi:providers:xyz",
-  "fqn": "pulumi_xyz",
+  "pkg": "statefulString",
+  "token": "pulumi:providers:statefulString",
+  "fqn": "pulumi_statefulString",
   "class": "Provider"
  }
 ]
