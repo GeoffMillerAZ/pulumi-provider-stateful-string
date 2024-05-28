@@ -566,6 +566,187 @@ func TestDiff(t *testing.T) {
 	}
 }
 
+func TestCheck(t *testing.T) {
+	t.Log("Starting TestCheck")
+	prov := provider()
+
+	testCases := []struct {
+		name           string
+		request        p.CheckRequest
+		expectedResult p.CheckResponse
+	}{
+		{
+			name: "String with 2 Triggers",
+			request: p.CheckRequest{
+				Urn:  urn("StatefulString"),
+				Olds: resource.PropertyMap{},
+				News: resource.PropertyMap{
+					"string": resource.NewStringProperty("1"),
+					"triggers": resource.NewObjectProperty(resource.PropertyMap{
+						"foo":  resource.NewStringProperty("barX"),
+						"foo3": resource.NewStringProperty("bar3"),
+					}),
+				},
+			},
+			expectedResult: p.CheckResponse{
+				Inputs: resource.PropertyMap{
+					"string": resource.NewStringProperty("1"),
+					"triggers": resource.NewObjectProperty(resource.PropertyMap{
+						"foo":  resource.NewStringProperty("barX"),
+						"foo3": resource.NewStringProperty("bar3"),
+					}),
+				},
+				Failures: nil,
+			},
+		},
+		{
+			name: "No String with 2 Triggers",
+			request: p.CheckRequest{
+				Urn:  urn("StatefulString"),
+				Olds: resource.PropertyMap{},
+				News: resource.PropertyMap{
+					"string":   resource.NewStringProperty("1"),
+					"triggers": resource.NewObjectProperty(resource.PropertyMap{}),
+				},
+			},
+			expectedResult: p.CheckResponse{
+				Inputs: resource.PropertyMap{
+					"string": resource.NewStringProperty(""),
+				},
+				Failures: nil,
+			},
+		},
+		// {
+		// 	name: "String with 0 Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"string": resource.NewStringProperty("1"),
+		// 			"triggers": resource.NewObjectProperty(resource.PropertyMap{
+		// 				"foo":  resource.NewStringProperty("barX"),
+		// 				"foo3": resource.NewStringProperty("bar3"),
+		// 			}),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "No String with 0 Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"string":   resource.NewStringProperty("1"),
+		// 			"triggers": resource.NewObjectProperty(resource.PropertyMap{}),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "String with missing Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"string": resource.NewStringProperty("1"),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "No String with missing Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"string": resource.NewStringProperty("1"),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "Missing String with Missing Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "Missing String with 0 Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"triggers": resource.NewObjectProperty(resource.PropertyMap{}),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+		// {
+		// 	name: "Missing String with 1 Triggers",
+		// 	request: p.CheckRequest{
+		// 		Urn:  urn("StatefulString"),
+		// 		Olds: resource.PropertyMap{},
+		// 		News: resource.PropertyMap{
+		// 			"triggers": resource.NewObjectProperty(resource.PropertyMap{
+		// 				"foo": resource.NewStringProperty("bar"),
+		// 			}),
+		// 		},
+		// 	},
+		// 	expectedResult: p.CheckResponse{
+		// 		Inputs: resource.PropertyMap{
+		// 			"property1": resource.NewStringProperty("value1"),
+		// 		},
+		// 		Failures: nil,
+		// 	},
+		// },
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Call the Check function
+			response, err := prov.Check(tc.request)
+			require.NoError(t, err)
+
+			// Check the result
+			assert.Equal(t, tc.expectedResult, response)
+		})
+	}
+}
+
 // urn is a helper function to build an urn for running integration tests.
 func urn(typ string) resource.URN {
 	return resource.NewURN("stack", "proj", "",

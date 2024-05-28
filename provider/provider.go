@@ -161,27 +161,50 @@ func (ss StatefulString) Diff(ctx p.Context, name string, olds StatefulStringSta
 	}, nil
 }
 
-func (ss StatefulString) Check(ctx p.Context, name string, oldInputs resource.PropertyMap, newInputs resource.PropertyMap) (p.CheckResponse, error) {
-	print("XXXXXXXXXXXX CHECK XXXXXXXXXXXXXXX")
-	print("XXXXXXXXXXXX CHECK XXXXXXXXXXXXXXX")
-	print("XXXXXXXXXXXX CHECK XXXXXXXXXXXXXXX")
-	print("XXXXXXXXXXXX CHECK XXXXXXXXXXXXXXX")
-	// Initialize an empty slice to hold any failures
-	// failures := []p.CheckFailure{}
+//  actual  : provider.CheckResponse{Inputs:resource.PropertyMap{
+// "string":resource.PropertyValue{V:"1"}, "triggers":resource.PropertyValue{V:resource.PropertyMap{"foo":resource.PropertyValue{V:"barX"},
+// "foo3":resource.PropertyValue{V:"bar3"}}}}, Failures:[]provider.CheckFailure(nil)}
 
-	// // Check if the Triggers map is empty
-	// if len(news.Triggers) == 0 {
-	// 	failures = append(failures, p.CheckFailure{
-	// 		Property: "Triggers",
-	// 		Reason:   "Triggers map cannot be empty",
-	// 	})
-	// }
+func (ss StatefulString) Check(ctx p.Context, name string, olds resource.PropertyMap, news resource.PropertyMap) (StatefulStringArgs, []p.CheckFailure, error) {
+	// Extract the string property
+	stringProp, stringOk := news["string"]
+	if !stringOk || stringProp.IsNull() {
+		// If the string property is not present in the new inputs or is nil, return a CheckFailure
+		return StatefulStringArgs{}, []p.CheckFailure{
+			{
+				Property: "string",
+				Reason:   "string property is required",
+			},
+		}, nil
+	}
 
-	// // If there are any failures, return them
-	// if len(failures) > 0 {
-	// 	return p.CheckResponse{Failures: failures}, nil
-	// }
+	// Extract the triggers property from the new inputs
+	triggersProp, triggersOk := news["triggers"]
+	if !triggersOk || triggersProp.IsNull() {
+		// If the triggers property is not present in the new inputs or is nil, return a CheckFailure
+		return StatefulStringArgs{}, []p.CheckFailure{
+			{
+				Property: "triggers",
+				Reason:   "triggers property is required",
+			},
+		}, nil
+	}
 
-	// If there are no failures, return a successful CheckResponse
-	return p.CheckResponse{}, nil
+	// Convert the properties to their underlying types
+	stringValue := stringProp.StringValue()
+	triggersValue := triggersProp.ObjectValue()
+
+	// Convert the triggers map to a map[string]string
+	triggersMap := make(map[string]string)
+	for key, value := range triggersValue {
+		triggersMap[string(key)] = value.StringValue()
+	}
+
+	// Create a new StatefulStringArgs instance
+	args := StatefulStringArgs{
+		String:   stringValue,
+		Triggers: triggersMap,
+	}
+
+	return args, nil, nil
 }
