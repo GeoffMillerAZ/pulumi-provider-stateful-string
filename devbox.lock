@@ -1,0 +1,229 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "go@latest": {
+      "last_modified": "2024-05-22T06:18:38Z",
+      "resolved": "github:NixOS/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e#go",
+      "source": "devbox-search",
+      "version": "1.22.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/i04a1a6qgxhjw6c0ld2b3x1v815sbxjc-go-1.22.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/i04a1a6qgxhjw6c0ld2b3x1v815sbxjc-go-1.22.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/d68f2iblysnl0r4qcfdacmdpmvvy86kf-go-1.22.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/d68f2iblysnl0r4qcfdacmdpmvvy86kf-go-1.22.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1p6vr83cgyfwm8517jhfmf6lypzhy3q2-go-1.22.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1p6vr83cgyfwm8517jhfmf6lypzhy3q2-go-1.22.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/00mg4vlhzmm7gi9bd5v5ydjlgrywpc3n-go-1.22.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/00mg4vlhzmm7gi9bd5v5ydjlgrywpc3n-go-1.22.3"
+        }
+      }
+    },
+    "pre-commit@latest": {
+      "last_modified": "2024-05-22T06:18:38Z",
+      "resolved": "github:NixOS/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e#pre-commit",
+      "source": "devbox-search",
+      "version": "3.7.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/m6vcq171ix6dxy47ckcky4rn2lizlj38-pre-commit-3.7.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/hclgm3693d3lacxqb9dc59c5lhnsw5lr-pre-commit-3.7.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/m6vcq171ix6dxy47ckcky4rn2lizlj38-pre-commit-3.7.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dp7b2i6m2jp0gx3ly2gn3699404das0r-pre-commit-3.7.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/y3ml7j5m7qdz8h60wrkc7h04za610x65-pre-commit-3.7.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/dp7b2i6m2jp0gx3ly2gn3699404das0r-pre-commit-3.7.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4np2gyq9m0fsvlbxbacd1djc46hwz8jz-pre-commit-3.7.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/9f41cnrgjzav66r5qm8ar79df9fzrbds-pre-commit-3.7.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/4np2gyq9m0fsvlbxbacd1djc46hwz8jz-pre-commit-3.7.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3yzkdwgszmd769xkf9h6p58l7j0hgjxz-pre-commit-3.7.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/flxzmmm328pdrlkxcm3dsm4fs8sxajp4-pre-commit-3.7.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/3yzkdwgszmd769xkf9h6p58l7j0hgjxz-pre-commit-3.7.1"
+        }
+      }
+    },
+    "pulumi@latest": {
+      "last_modified": "2024-05-22T06:18:38Z",
+      "resolved": "github:NixOS/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e#pulumi",
+      "source": "devbox-search",
+      "version": "3.99.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1jm2mgwhwcmyj11sa7zf6xvzsa741a1l-pulumi-3.99.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1jm2mgwhwcmyj11sa7zf6xvzsa741a1l-pulumi-3.99.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p62g916nlqfx3n4n6cy16ymmnnjli49j-pulumi-3.99.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/p62g916nlqfx3n4n6cy16ymmnnjli49j-pulumi-3.99.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/alvdirhsyrs6ms6q705g24p14yj0ji9s-pulumi-3.99.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/alvdirhsyrs6ms6q705g24p14yj0ji9s-pulumi-3.99.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/mq2vv402503p5ylw2r7p57rzsiyhp72v-pulumi-3.99.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/mq2vv402503p5ylw2r7p57rzsiyhp72v-pulumi-3.99.0"
+        }
+      }
+    },
+    "python310Packages.pulumi@latest": {
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#python310Packages.pulumi",
+      "source": "devbox-search",
+      "version": "3.93.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yl5sd9qjcgqdw4n2mhxfcmb0nngxa7nx-python3.10-pulumi-3.93.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/6hnz5zz5gb78plqsrpr83pclnj1in87z-python3.10-pulumi-3.93.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/yl5sd9qjcgqdw4n2mhxfcmb0nngxa7nx-python3.10-pulumi-3.93.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pvdfmdm0nx4dah2bxdq83j7c4lgykykh-python3.10-pulumi-3.93.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/0si1izcfii4vzdklwkxg63vm4fl2fq0v-python3.10-pulumi-3.93.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/pvdfmdm0nx4dah2bxdq83j7c4lgykykh-python3.10-pulumi-3.93.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4aj2j16vl2cig3x6rf8vg76w8z6rnc2w-python3.10-pulumi-3.93.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/xf4dshmv4m6rphnrs1rg4swrx9yjh9ln-python3.10-pulumi-3.93.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/4aj2j16vl2cig3x6rf8vg76w8z6rnc2w-python3.10-pulumi-3.93.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jd0rhnyi7wrv1jk80gka9i7nfiix34jc-python3.10-pulumi-3.93.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/jzw2qax98waqxpw98j418q7ij1r56i7k-python3.10-pulumi-3.93.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/jd0rhnyi7wrv1jk80gka9i7nfiix34jc-python3.10-pulumi-3.93.0"
+        }
+      }
+    }
+  }
+}

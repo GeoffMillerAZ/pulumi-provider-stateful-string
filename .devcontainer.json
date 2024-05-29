@@ -8,21 +8,36 @@
   "customizations": {
     "vscode": {
       "settings": [
-        "go.testTags", "all",
-        "go.buildTags", "all",
-        "editor.minimap.enabled", false,
-        "explorer.openEditors.visible", 1,
-        "editor.quickSuggestionsDelay", 0,
-        "editor.suggestSelection", "first",
-        "editor.snippetSuggestions", "top",
-        "editor.gotoLocation.multipleReferences", "goto",
-        "editor.gotoLocation.multipleDefinitions", "goto",
-        "editor.gotoLocation.multipleDeclarations", "goto",
-        "editor.gotoLocation.multipleImplementations", "goto",
-        "editor.gotoLocation.multipleTypeDefinitions", "goto",
-        "editor.terminal.integrated.shell.linux", "/usr/bin/zsh",
-        "files.trimTrailingWhitespace", true,
-        "files.trimFinalNewlines", true
+        "go.testTags",
+        "all",
+        "go.buildTags",
+        "all",
+        "editor.minimap.enabled",
+        false,
+        "explorer.openEditors.visible",
+        1,
+        "editor.quickSuggestionsDelay",
+        0,
+        "editor.suggestSelection",
+        "first",
+        "editor.snippetSuggestions",
+        "top",
+        "editor.gotoLocation.multipleReferences",
+        "goto",
+        "editor.gotoLocation.multipleDefinitions",
+        "goto",
+        "editor.gotoLocation.multipleDeclarations",
+        "goto",
+        "editor.gotoLocation.multipleImplementations",
+        "goto",
+        "editor.gotoLocation.multipleTypeDefinitions",
+        "goto",
+        "editor.terminal.integrated.shell.linux",
+        "/usr/bin/zsh",
+        "files.trimTrailingWhitespace",
+        true,
+        "files.trimFinalNewlines",
+        true
       ],
       "extensions": [
         "golang.go",
@@ -43,26 +58,29 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
-        "installZsh": true,
-        "configureZshAsDefaultShell": true,
-        "installOhMyZsh": true,
-        "installOhMyZshConfig": true,
-        "upgradePackages": true,
-        "nonFreePackages": true,
-        "username": "vscode",
-        "userUid": "automatic",
-        "userGid": "automatic"
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true,
+      "upgradePackages": true,
+      "nonFreePackages": true,
+      "username": "vscode",
+      "userUid": "automatic",
+      "userGid": "automatic"
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-        "moby": false,
-        "installDockerBuildx": true,
-        "version": "latest",
-        "dockerDashComposeVersion": "v2"
+      "moby": false,
+      "installDockerBuildx": true,
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
     }
   },
   "postCreateCommand": "git submodule update --init --recursive",
   "remoteUser": "vscode",
-  "forwardPorts": [1313],
-  "runArgs": ["--network=host"]
+  "forwardPorts": [
+    1313
+  ],
+  "runArgs": [
+    "--network=host"
+  ]
 }
-
