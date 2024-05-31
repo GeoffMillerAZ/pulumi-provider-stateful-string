@@ -17,7 +17,6 @@ package provider
 import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
 )
 
@@ -165,46 +164,46 @@ func (ss StatefulString) Diff(ctx p.Context, name string, olds StatefulStringSta
 // "string":resource.PropertyValue{V:"1"}, "triggers":resource.PropertyValue{V:resource.PropertyMap{"foo":resource.PropertyValue{V:"barX"},
 // "foo3":resource.PropertyValue{V:"bar3"}}}}, Failures:[]provider.CheckFailure(nil)}
 
-func (ss StatefulString) Check(ctx p.Context, name string, olds resource.PropertyMap, news resource.PropertyMap) (StatefulStringArgs, []p.CheckFailure, error) {
-	// Extract the string property
-	stringProp, stringOk := news["string"]
-	if !stringOk || stringProp.IsNull() {
-		// If the string property is not present in the new inputs or is nil, return a CheckFailure
-		return StatefulStringArgs{}, []p.CheckFailure{
-			{
-				Property: "string",
-				Reason:   "string property is required",
-			},
-		}, nil
-	}
+// func (ss StatefulString) Check(ctx p.Context, name string, olds resource.PropertyMap, news resource.PropertyMap) (StatefulStringArgs, []p.CheckFailure, error) {
+// 	// Extract the string property
+// 	stringProp, stringOk := news["string"]
+// 	if !stringOk || stringProp.IsNull() {
+// 		// If the string property is not present in the new inputs or is nil, return a CheckFailure
+// 		return StatefulStringArgs{}, []p.CheckFailure{
+// 			{
+// 				Property: "string",
+// 				Reason:   "string property is required",
+// 			},
+// 		}, nil
+// 	}
 
-	// Extract the triggers property from the new inputs
-	triggersProp, triggersOk := news["triggers"]
-	if !triggersOk || triggersProp.IsNull() {
-		// If the triggers property is not present in the new inputs or is nil, return a CheckFailure
-		return StatefulStringArgs{}, []p.CheckFailure{
-			{
-				Property: "triggers",
-				Reason:   "triggers property is required",
-			},
-		}, nil
-	}
+// 	// Extract the triggers property from the new inputs
+// 	triggersProp, triggersOk := news["triggers"]
+// 	if !triggersOk || triggersProp.IsNull() {
+// 		// If the triggers property is not present in the new inputs or is nil, return a CheckFailure
+// 		return StatefulStringArgs{}, []p.CheckFailure{
+// 			{
+// 				Property: "triggers",
+// 				Reason:   "triggers property is required",
+// 			},
+// 		}, nil
+// 	}
 
-	// Convert the properties to their underlying types
-	stringValue := stringProp.StringValue()
-	triggersValue := triggersProp.ObjectValue()
+// 	// Convert the properties to their underlying types
+// 	stringValue := stringProp.StringValue()
+// 	triggersValue := triggersProp.ObjectValue()
 
-	// Convert the triggers map to a map[string]string
-	triggersMap := make(map[string]string)
-	for key, value := range triggersValue {
-		triggersMap[string(key)] = value.StringValue()
-	}
+// 	// Convert the triggers map to a map[string]string
+// 	triggersMap := make(map[string]string)
+// 	for key, value := range triggersValue {
+// 		triggersMap[string(key)] = value.StringValue()
+// 	}
 
-	// Create a new StatefulStringArgs instance
-	args := StatefulStringArgs{
-		String:   stringValue,
-		Triggers: triggersMap,
-	}
+// 	// Create a new StatefulStringArgs instance
+// 	args := StatefulStringArgs{
+// 		String:   stringValue,
+// 		Triggers: triggersMap,
+// 	}
 
-	return args, nil, nil
-}
+// 	return args, nil, nil
+// }
